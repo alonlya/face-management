@@ -1,0 +1,125 @@
+<div class="container">
+
+  <h1>人脸库查询</h1>
+
+
+  <div class="search-box">
+    <label for="name-input">姓名：</label>
+    <input type="text" [(ngModel)]="searchName" id="name-input">
+    <label for="group-input">班组：</label>
+    <input type="text" [(ngModel)]="searchGroup" id="group-input">
+    <button (click)="search()">查询</button>
+    <button (click)="resetSearch()">重置</button>
+    <!-- add face button -->
+  </div>
+
+
+  <div>
+    <button (click)="showAddFaceModal()">添加人脸</button>
+  </div>
+  
+  <!-- 添加人脸的弹窗 -->
+  <div *ngIf="showAddFace">
+    <div>
+      <label>姓名：</label>
+      <input [(ngModel)]="name">
+    </div>
+    <div>
+      <label>班组：</label>
+      <input [(ngModel)]="group">
+    </div>
+    <div>
+      <label>选择图片：</label>
+      <input type="file" (change)="onFileChange($event)">
+    </div>
+    <button (click)="addFace()">确认</button>
+    <button (click)="cancelAddFace()">取消</button>
+  </div>
+
+
+  <!-- 添加人脸成功弹窗 -->
+  <div *ngIf="showAddFaceSuccess">
+    <p>添加人脸成功！</p>
+    <button (click)="hideAddFaceSuccess()">确定</button>
+  </div>
+
+
+  <!-- 模态框 -->
+<div *ngIf="showModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">修改人脸信息</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="name">姓名</label>
+          <input type="text" class="form-control" id="name" [(ngModel)]="name" placeholder="请输入姓名">
+        </div>
+        <div class="form-group">
+          <label for="group">班组</label>
+          <input type="text" class="form-control" id="group" [(ngModel)]="group" placeholder="请输入班组">
+        </div>
+        <div class="form-group">
+          <label for="image">图片</label>
+          <input type="file" class="form-control-file" id="image" (change)="handleImageUpload($event)">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">关闭</button>
+        <button type="button" class="btn btn-primary" (click)="updateFace()">修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>姓名</th>
+        <th>班组</th>
+        <th>人员图片信息</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataList">
+        <td>{{ data.id }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.group }}</td>
+        <td>
+          <div class="thumbnail">
+            <img [src]="getThumbnail(data.face_base64)" alt="人员图片" (click)="showImage(data.image)">
+          </div>
+        </td>
+        <td>
+          <button type="button" class="btn btn-primary" (click)="openModal(data)">修改</button>
+          <button class="btn btn-danger" (click)="deleteFace(data.id)">删除</button>
+          <!-- <button (click)="edit(data)">编辑</button>
+          <button (click)="delete(data)">删除</button> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <div class="pagination">
+    <ul>
+      <li *ngIf="currentPage > 1">
+        <a href="#" (click)="onPrePageClicked($event)">上一页</a>()
+      </li>
+      <li *ngFor="let page of getPages()">
+        <a [routerLink]="['/face']" [class.active]="currentPage === page" (click)="loadPage(page)">{{ page }}</a>
+      </li>
+      <li *ngIf="currentPage < lastPage">
+        <a href="#" (click)="onNextPageClicked($event)">下一页</a>
+      </li>
+    </ul>
+  </div>
+
+  
+</div>
